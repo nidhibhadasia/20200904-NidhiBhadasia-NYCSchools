@@ -111,19 +111,22 @@ class SchoolListViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     // MARK: - API call
-    func callNYCSchoolList() {
+   func callNYCSchoolList() {
         // call API to fetch school data
         self.showSpinner()
         NetworkManager.shared.fetchNYCSchoolList(offset: self.arSchoolVM.count) { (arSchoolList, error) in
             if error == nil {
                 self.arSchoolVM = self.arSchoolVM + arSchoolList.map {SchoolViewModel(model: $0)}
                 self.lastElementIndex = self.arSchoolVM.count - 1;
+                DispatchQueue.main.async {
+                    self.hideSpinner()
+                }
             }
             else {
-                self.showAlertWithMessage(alertMessage: error ?? "Something went wrong. Plese try again")
-            }
-            DispatchQueue.main.async {
-                self.hideSpinner()
+                DispatchQueue.main.async {
+                    self.hideSpinner()
+                    self.showAlertWithMessage(alertMessage: error ?? "Something went wrong. Plese try again")
+                }
             }
         }
     }
